@@ -1,0 +1,116 @@
+<section class="contenedor-formulario">
+  <div class="encabezado-formulario">
+    <div>
+      <h2>Alta de Nuevo Producto</h2>
+      <p class="subtitulo">
+        Al guardar se envía: <code>POST {{ endpointPostUrl }}</code>
+      </p>
+    </div>
+    <a routerLink="/productos" class="btn btn-secundario">&larr; Volver al listado</a>
+  </div>
+
+  @if (usandoCategoriasDePrueba()) {
+    <div class="estado-caja estado-aviso">
+      <span>🧪 Como <code>GET /categorias</code> no respondió, el desplegable de categorías se cargó con <strong>datos de prueba</strong>.</span>
+    </div>
+  }
+
+  @if (mensajeError()) {
+    <div class="estado-caja estado-error">
+      <h3>⚠️ Error al intentar guardar en el Backend</h3>
+      <p>{{ mensajeError() }}</p>
+      <div class="acciones-error">
+        <button type="button" class="btn btn-secundario" (click)="guardarEnModoPrueba()">
+          Guardar en memoria (Modo Prueba / Mock)
+        </button>
+      </div>
+    </div>
+  }
+
+  <!--
+    (ngSubmit) se dispara cuando el usuario presiona el botón de tipo "submit".
+    Cada input usa [(ngModel)] para sincronizar lo que escribe el usuario con el objeto `nuevoProducto`.
+  -->
+  <form (ngSubmit)="guardarProducto()" #formProducto="ngForm" class="formulario">
+    <div class="campo">
+      <label for="nombre">Nombre del Producto *</label>
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        [(ngModel)]="nuevoProducto.nombre"
+        required
+        placeholder="Ej: Auriculares Inalámbricos"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="descripcion">Descripción *</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        rows="3"
+        [(ngModel)]="nuevoProducto.descripcion"
+        required
+        placeholder="Ej: Auriculares Bluetooth con cancelación de ruido"
+      ></textarea>
+    </div>
+
+    <div class="fila-doble">
+      <div class="campo">
+        <label for="costo">Costo ($) *</label>
+        <input
+          type="number"
+          id="costo"
+          name="costo"
+          [(ngModel)]="nuevoProducto.costo"
+          min="0"
+          step="0.01"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="precio">Precio de Venta ($) *</label>
+        <input
+          type="number"
+          id="precio"
+          name="precio"
+          [(ngModel)]="nuevoProducto.precio"
+          min="0"
+          step="0.01"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="categoria">Categoría (Tabla Categoría) *</label>
+      <!--
+        El usuario ve el nombre de la categoría (cat.nombre),
+        pero Angular guarda el ID numérico (cat.id) en nuevoProducto.categoria
+      -->
+      <select
+        id="categoria"
+        name="categoria"
+        [(ngModel)]="nuevoProducto.categoria"
+        required
+      >
+        @for (cat of categorias(); track cat.id) {
+          <option [ngValue]="cat.id">{{ cat.nombre }} (ID: {{ cat.id }})</option>
+        }
+      </select>
+    </div>
+
+    <div class="pie-formulario">
+      <a routerLink="/productos" class="btn btn-secundario">Cancelar</a>
+      <button
+        type="submit"
+        class="btn btn-primario"
+        [disabled]="formProducto.invalid || guardando()"
+      >
+        {{ guardando() ? 'Enviando POST...' : 'Guardar Producto en API' }}
+      </button>
+    </div>
+  </form>
+</section>
