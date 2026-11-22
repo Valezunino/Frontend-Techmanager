@@ -1,0 +1,19 @@
+<div class="page-heading"><div><p class="kicker">INVENTARIO / PRODUCTOS</p><h1>{{ id() === null ? 'Nuevo producto' : 'Editar producto' }}</h1><p class="muted">Completá los datos para guardar los cambios en la base de datos.</p></div><a class="btn btn-outline" routerLink="/productos">← Volver</a></div>
+@if (error()) { <div class="error" role="alert">{{ error() }}</div> }
+@if (cargando()) { <div class="panel empty-state">Cargando formulario…</div> }
+@else {
+  <section class="panel form-card"><div class="panel-head"><h2>Información del producto</h2><span class="muted">* Campos obligatorios</span></div>
+  <form class="panel-body" (ngSubmit)="guardar()" #f="ngForm"><div class="form-grid">
+    <div class="form-field full"><label class="form-label">Nombre del producto *</label><input class="field" name="nombre" [(ngModel)]="nombre" required maxlength="150" placeholder="Ej. Notebook Lenovo IdeaPad" /></div>
+    <div class="form-field full"><label class="form-label">Descripción</label><textarea class="field" name="descripcion" [(ngModel)]="descripcion" maxlength="500" placeholder="Características o información adicional"></textarea></div>
+    <div class="form-field"><label class="form-label">Precio de compra *</label><input class="field" name="precioCompra" type="number" [(ngModel)]="precioCompra" required min="0" step="0.01" /></div>
+    <div class="form-field"><label class="form-label">Precio de venta *</label><input class="field" name="precioVenta" type="number" [(ngModel)]="precioVenta" required min="0" step="0.01" /></div>
+    <div class="form-field"><label class="form-label">Stock *</label><input class="field" name="stock" type="number" [(ngModel)]="stock" required min="0" step="1" /></div>
+    <div class="form-field"><label class="form-label">Categoría *</label><select class="field" name="categoriaId" [(ngModel)]="categoriaId" required><option [ngValue]="0">Elegir categoría</option>@for(c of categorias();track c.id){<option [ngValue]="c.id">{{ c.nombre }}</option>}</select></div>
+    <div class="form-field"><label class="form-label">Marca *</label><select class="field" name="marcaId" [(ngModel)]="marcaId" required><option [ngValue]="0">Elegir marca</option>@for(m of marcas();track m.id){<option [ngValue]="m.id">{{ m.nombre }}</option>}</select></div>
+    <div class="form-field"><label class="checkbox-row" style="margin-top:29px"><input type="checkbox" name="activo" [(ngModel)]="activo" /> Producto activo en el inventario</label></div>
+  </div>
+  @if (categorias().length === 0 || marcas().length === 0) { <div class="login-box">Antes de guardar necesitás cargar al menos una categoría y una marca desde el menú.</div> }
+  <div class="form-actions"><a routerLink="/productos" class="btn btn-outline">Cancelar</a><button type="submit" class="btn btn-primary" [disabled]="f.invalid || guardando() || !categoriaId || !marcaId">{{ guardando() ? 'Guardando…' : (id() === null ? 'Crear producto' : 'Guardar cambios') }}</button></div>
+  </form></section>
+}
