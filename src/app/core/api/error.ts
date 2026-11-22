@@ -8,7 +8,7 @@ export function mensajeApi(error: unknown): string {
     const detalle = error.error as string | Record<string, unknown> | null;
     if (typeof detalle === 'string' && detalle.trim()) return detalle;
     if (detalle && typeof detalle === 'object') {
-      const mensaje = detalle.message ?? detalle.mensaje ?? detalle.error;
+      const mensaje = detalle['message'] ?? detalle['mensaje'] ?? detalle['error'];
       if (typeof mensaje === 'string' && mensaje.trim()) return mensaje;
     }
     return `Error ${error.status}: no se pudo completar la operación.`;
