@@ -1,0 +1,18 @@
+<section class="page-heading"><div><p class="kicker">CATÁLOGO</p><h1>{{ titulo() }}</h1><p class="muted">Organizá los productos de tu inventario.</p></div></section>
+@if (error()) { <div class="error" role="alert">{{ error() }}</div> }
+@if (exito()) { <div class="success-note">{{ exito() }}</div> }
+<div class="catalog-grid">
+  <section class="panel"><div class="panel-head"><h2>Listado de {{ titulo().toLowerCase() }}</h2><span class="muted">{{ items().length }} registradas</span></div>
+    @if (cargando()) { <div class="empty-state">Cargando datos…</div> } @else {
+      <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Acciones</th></tr></thead><tbody>
+      @for (item of items(); track item.id) { <tr><td><div class="cell-main">{{ item.nombre }}</div><div class="cell-sub">ID #{{ item.id }}</div></td><td><div class="actions-cell"><button class="btn btn-outline btn-small" (click)="editar(item)">Editar</button><button class="btn btn-danger btn-small" (click)="eliminar(item)">Eliminar</button></div></td></tr> }
+      @empty { <tr><td colspan="2"><div class="empty-state"><strong>Sin registros</strong>Agregá tu primera {{ singular() }}.</div></td></tr> }
+      </tbody></table></div>
+    }
+  </section>
+  <section class="panel"><div class="panel-head"><h2>{{ editando() === null ? 'Nueva' : 'Editar' }} {{ singular() }}</h2></div>
+    <form class="panel-body" (ngSubmit)="guardar()" #f="ngForm"><div class="form-field"><label class="form-label">Nombre *</label><input class="field" name="nombre" [(ngModel)]="nombre" maxlength="100" placeholder="Nombre" required /></div>
+    <div class="form-actions"><button type="button" class="btn btn-outline" (click)="cancelar()">Cancelar</button><button type="submit" class="btn btn-primary" [disabled]="f.invalid || guardando()">{{ guardando() ? 'Guardando…' : 'Guardar' }}</button></div>
+    <p class="small-note">Las {{ titulo().toLowerCase() }} se guardan directamente en PostgreSQL a través de la API.</p></form>
+  </section>
+</div>
