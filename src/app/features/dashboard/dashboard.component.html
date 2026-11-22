@@ -1,0 +1,25 @@
+<section class="page-heading"><div><p class="kicker">PANEL GENERAL</p><h1>Resumen del inventario</h1><p class="muted">Tené una visión clara del estado de tu negocio en tiempo real.</p></div><a class="btn btn-primary" routerLink="/productos/nuevo">＋ Nuevo producto</a></section>
+@if (error()) { <div class="error" role="alert">{{ error() }}</div> }
+@if (cargando()) { <div class="panel empty-state">Cargando información de la base de datos…</div> }
+@else {
+  <div class="stats-grid">
+    <article class="stat-card"><div class="stat-top"><span class="stat-label">Productos registrados</span><span class="stat-icon">▤</span></div><div class="stat-value">{{ total() }}</div><div class="stat-desc">Productos en catálogo</div></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-label">Stock bajo</span><span class="stat-icon orange">⚑</span></div><div class="stat-value">{{ stockBajo() }}</div><div class="stat-desc">Con 1 a 5 unidades</div></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-label">Sin stock</span><span class="stat-icon red">!</span></div><div class="stat-value">{{ sinStock() }}</div><div class="stat-desc">Productos agotados</div></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-label">Valor de inventario</span><span class="stat-icon green">$</span></div><div class="stat-value" style="font-size:24px">{{ valor().toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }) }}</div><div class="stat-desc">Calculado al precio de compra</div></article>
+  </div>
+  <div class="dashboard-grid">
+    <section class="panel"><div class="panel-head"><h2>Últimos productos registrados</h2><a class="link-text" routerLink="/productos">Ver todos →</a></div>
+      <div class="table-wrap"><table class="data-table"><thead><tr><th>Producto</th><th>Precio de venta</th><th>Stock</th></tr></thead><tbody>
+        @for(p of recientes();track p.id){<tr><td><div class="cell-main">{{ p.nombre }}</div><div class="cell-sub">{{ p.marca?.nombre || 'Sin marca' }}</div></td><td>{{ p.precioVenta.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' }) }}</td><td><span class="badge" [class.success]="p.stock > 5" [class.warning]="p.stock > 0 && p.stock <= 5" [class.danger]="p.stock === 0">{{ p.stock }} unidades</span></td></tr>}
+        @empty {<tr><td colspan="3"><div class="empty-state">Todavía no hay productos.</div></td></tr>}
+      </tbody></table></div>
+    </section>
+    <section class="panel"><div class="panel-head"><h2>Alertas de inventario</h2><span class="badge warning">{{ alertas().length }} alertas</span></div>
+      <div class="alert-list">@for(p of alertas();track p.id){<div class="alert-item"><div><strong>{{ p.nombre }}</strong><br><span>{{ p.marca?.nombre }}</span></div><span class="badge" [class.warning]="p.stock > 0" [class.danger]="p.stock === 0">{{ p.stock === 0 ? 'Agotado' : p.stock + ' unidades' }}</span></div>}
+      @empty {<div class="empty-state"><strong>¡Todo en orden!</strong> No hay alertas de stock.</div>}</div>
+      <div style="padding:0 18px 17px"><a class="link-text" routerLink="/productos">Gestionar stock →</a></div>
+    </section>
+  </div>
+  <div class="cards-2" style="margin-top:18px"><div class="panel panel-body"><h2>{{ categorias() }} categorías</h2><p class="muted">Agrupá los productos por tipo.</p><a class="link-text" routerLink="/categorias">Administrar categorías →</a></div><div class="panel panel-body"><h2>{{ marcas() }} marcas</h2><p class="muted">Organizá el catálogo por fabricante.</p><a class="link-text" routerLink="/marcas">Administrar marcas →</a></div></div>
+}
