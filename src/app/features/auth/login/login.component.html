@@ -1,0 +1,80 @@
+<section class="contenedor-login">
+  <div class="encabezado-login">
+    <h2>🔐 Autenticación JWT (Spring Security)</h2>
+    <p class="subtitulo">
+      Endpoint de login: <code>POST {{ endpointLoginUrl }}</code>
+    </p>
+  </div>
+
+  @if (authService.estaAutenticado()) {
+    <div class="estado-caja estado-activo">
+      <h3>✅ Sesión JWT Activa</h3>
+      <p>Usuario: <strong>{{ authService.usuarioActual() }}</strong></p>
+      <p class="detalle-token">
+        Token guardado en <code>localStorage.getItem('token')</code>:
+      </p>
+      <code class="bloque-token">{{ authService.obtenerToken() }}</code>
+      <p class="ayuda-jwt">
+        💡 <strong>¿Qué pasa ahora?</strong> Nuestro <code>jwtInterceptor</code> detecta este token y agrega automáticamente la cabecera
+        <code>Authorization: Bearer &lt;token&gt;</code> en todas las peticiones hacia <code>/productos</code> y <code>/categorias</code>.
+      </p>
+      <div class="acciones-sesion">
+        <a routerLink="/productos" class="btn btn-primario">Ir a Productos</a>
+        <button type="button" class="btn btn-peligro" (click)="cerrarSesion()">
+          Cerrar Sesión (Borrar JWT)
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (mensajeError()) {
+    <div class="estado-caja estado-error">
+      <h3>⚠️ Error al autenticar con el Backend</h3>
+      <p>{{ mensajeError() }}</p>
+    </div>
+  }
+
+  <form (ngSubmit)="iniciarSesion()" #formLogin="ngForm" class="formulario-login">
+    <div class="campo">
+      <label for="email">Email o Usuario *</label>
+      <input
+        type="text"
+        id="email"
+        name="email"
+        [(ngModel)]="credenciales.email"
+        required
+        placeholder="Ej: admin@sistema.com (o DNI según tu backend)"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="password">Contraseña *</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        [(ngModel)]="credenciales.password"
+        required
+        placeholder="••••••••"
+      />
+    </div>
+
+    <div class="acciones-formulario">
+      <button
+        type="submit"
+        class="btn btn-primario"
+        [disabled]="formLogin.invalid || cargando()"
+      >
+        {{ cargando() ? 'Autenticando...' : 'Iniciar Sesión en API' }}
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secundario"
+        (click)="iniciarSesionDePrueba()"
+      >
+        🧪 Generar Token JWT de Prueba (Sin Backend)
+      </button>
+    </div>
+  </form>
+</section>
