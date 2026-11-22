@@ -5,7 +5,7 @@ export function mensajeApi(error: unknown): string {
     if (error.status === 0) return 'No se pudo conectar con el servidor. Revisá que la API esté iniciada.';
     if (error.status === 401) return 'Tu sesión venció o necesitás iniciar sesión.';
     if (error.status === 403) return 'No tenés permiso para realizar esta acción.';
-    const detalle = error.error;
+    const detalle = error.error as string | Record<string, unknown> | null;
     if (typeof detalle === 'string' && detalle.trim()) return detalle;
     if (detalle && typeof detalle === 'object') {
       const mensaje = detalle.message ?? detalle.mensaje ?? detalle.error;
