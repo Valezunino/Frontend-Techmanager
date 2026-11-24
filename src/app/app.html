@@ -1,0 +1,22 @@
+<div class="layout-principal">
+  <header class="barra-superior">
+    <div class="contenedor-header">
+      <div class="marca"><span class="icono-marca">📦</span><h1>TechManager</h1></div>
+      <nav class="navegacion" aria-label="Navegación principal">
+        <a routerLink="/dashboard" routerLinkActive="activo">Inicio</a>
+        <a routerLink="/productos" routerLinkActive="activo">Productos</a>
+        <a routerLink="/categorias" routerLinkActive="activo">Categorías</a>
+        <a routerLink="/marcas" routerLinkActive="activo">Marcas</a>
+        <a routerLink="/productos/nuevo" routerLinkActive="activo">+ Nuevo producto</a>
+        @if (authService.autenticado()) {
+          @if (authService.esAdmin()) { <a routerLink="/usuarios" routerLinkActive="activo">Usuarios</a> }
+          <a routerLink="/login" class="badge-jwt activo-jwt" (click)="authService.logout()">Salir · {{ authService.sesion()?.nombre }}</a>
+        } @else {
+          <a routerLink="/login" class="badge-jwt">🔐 Login (JWT)</a>
+        }
+      </nav>
+    </div>
+  </header>
+  <main class="contenido-principal"><router-outlet /></main>
+  <footer class="pie-pagina"><p>TechManager · Angular + Spring Boot + PostgreSQL</p></footer>
+</div>
