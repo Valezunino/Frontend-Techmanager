@@ -1,0 +1,17 @@
+<section class="page-heading"><div><p class="kicker">INVENTARIO</p><h1>Productos</h1><p class="muted">Gestioná el catálogo, precios y disponibilidad de tu negocio.</p></div><a class="btn btn-primary" routerLink="/productos/nuevo">＋ Nuevo producto</a></section>
+@if (error()) { <div class="error" role="alert">{{ error() }}</div> }
+@if (exito()) { <div class="success-note">{{ exito() }}</div> }
+<section class="panel">
+  <div class="toolbar"><div class="search"><input class="search-input" placeholder="⌕  Buscar por producto, marca o categoría…" aria-label="Buscar productos" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" /></div><select class="field select" aria-label="Filtrar productos" [ngModel]="filtro()" (ngModelChange)="filtro.set($event)"><option value="todos">Todos los productos</option><option value="activos">Activos</option><option value="bajo">Stock bajo</option><option value="sin-stock">Sin stock</option></select><button class="btn btn-outline" (click)="cargar()">↻ Actualizar</button></div>
+  @if (cargando()) { <div class="empty-state">Cargando productos desde PostgreSQL…</div> }
+  @else { <div class="table-wrap"><table class="data-table"><thead><tr><th>Producto</th><th>Categoría / Marca</th><th>Compra</th><th>Venta</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+    @for (p of filtrados(); track p.id) { <tr><td><div class="cell-main">{{ p.nombre }}</div><div class="cell-sub">#{{ p.id }} · {{ p.descripcion || 'Sin descripción' }}</div></td>
+      <td><div>{{ p.categoria?.nombre }}</div><div class="cell-sub">{{ p.marca?.nombre }}</div></td>
+      <td>{{ p.precioCompra.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' }) }}</td>
+      <td class="cell-main">{{ p.precioVenta.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' }) }}</td>
+      <td><strong [class.danger-text]="p.stock === 0">{{ p.stock }}</strong></td>
+      <td><span class="badge" [class.success]="p.activo && p.stock > 5" [class.warning]="p.activo && p.stock > 0 && p.stock <= 5" [class.danger]="p.activo && p.stock === 0" [class.muted-badge]="!p.activo">{{ estado(p) }}</span></td>
+      <td><div class="actions-cell"><a class="btn btn-outline btn-small" [routerLink]="['/productos',p.id,'editar']">Editar</a><button class="btn btn-danger btn-small" (click)="eliminar(p)">Eliminar</button></div></td></tr> }
+    @empty { <tr><td colspan="7"><div class="empty-state"><strong>No hay productos para mostrar.</strong>Probá otro filtro o agregá tu primer producto.</div></td></tr> }
+  </tbody></table></div> }
+</section>
